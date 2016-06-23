@@ -52,17 +52,39 @@
                 android:onClick="femaleSelected" />
         </RadioGroup>
 
-        <TextView
-            android:layout_width="187dp"
-            android:layout_height="96dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/finalName"
-            android:layout_weight="1"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="bottom"
-            android:autoText="true"
-            android:textAlignment="center" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="77dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/finalName"
+                android:layout_weight="1"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="bottom"
+                android:autoText="false"
+                android:textAlignment="center" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="150dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/loadText"
+                android:layout_weight="1"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="bottom"
+                android:autoText="true"
+                android:textAlignment="center" />
+        </TableRow>
 
         <Button
             android:layout_width="wrap_content"

@@ -1,6 +1,7 @@
 package com.apps.corson.randomnamegenerator;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -32,17 +33,20 @@ public class MainActivity extends AppCompatActivity {
     List<String> allnames = new ArrayList<>();
     List<String> lastnames = new ArrayList<>();
 
-    List<String> savedNames = new ArrayList<>();
+    static List<String> savedNames = new ArrayList<>();
 
 //test
 
     TextView finalName;
+    TextView loadText;
 
     String gender = "all";
 
     ImageButton maleButton;
     ImageButton anyButton;
     ImageButton femaleButton;
+
+    final static String filename = "saved_names";
 
 
     public void maleSelected(View view) {
@@ -71,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         finalName = (TextView)findViewById(R.id.finalName);
+        loadText = (TextView)findViewById(R.id.loadText);
+
         maleButton = (ImageButton)findViewById(R.id.maleButton);
         anyButton = (ImageButton)findViewById(R.id.anyButton);
         femaleButton = (ImageButton)findViewById(R.id.femaleButton);
@@ -141,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void saveName(View view){
         String name = finalName.getText().toString() + "\n";
-        String filename = "saved_names";
+
         try {
             FileOutputStream fos = new FileOutputStream((getFilesDir() + filename), true);
             fos.write(name.getBytes());
@@ -154,23 +160,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     public void loadName(View view){
-        String filename = "saved_names";
         String input;
-  //      StringBuilder sb = new StringBuilder();
         try {
             BufferedReader bf = new BufferedReader(new FileReader(getFilesDir() + filename));
 
-  //          sb.append(bf.readLine());
-
+            savedNames.clear();
             while ((input = bf.readLine()) != null){
-  //              sb.append(input);
                 savedNames.add(input);
             }
-
-            for (int i = 0; i < savedNames.size(); i++){
-                finalName.setText(finalName.getText() + "\n" + savedNames.get(i));
-            }
+            System.out.println("savedNames = " + savedNames);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -178,10 +179,11 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-  //      finalName.setText(sb.toString());
+        Intent intent = new Intent(MainActivity.this, ActivityLoadNames.class);
+        startActivity(intent);
     }
 
-    public void initializeNames() throws IOException{
+    public void initializeNames() throws IOException{       //Add names from textfiles to ArrayLists
 
         AssetManager am = this.context.getAssets();
 
