@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     List<String> savedNames = new ArrayList<>();
 
-
+//test
 
     TextView finalName;
 

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RandomNameGenerator.iml" filepath="$PROJECT_DIR$/RandomNameGenerator.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fakenamegenerator.iml" filepath="$PROJECT_DIR$/fakenamegenerator.iml" />
     </modules>
   </component>
 </project>
