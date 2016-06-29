@@ -9,15 +9,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     ImageButton maleButton;
     ImageButton anyButton;
     ImageButton femaleButton;
+
+    Button saveButton;
+    Button loadButton;
 
     final static String filename = "saved_names";
 
@@ -80,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         maleButton = (ImageButton)findViewById(R.id.maleButton);
         anyButton = (ImageButton)findViewById(R.id.anyButton);
         femaleButton = (ImageButton)findViewById(R.id.femaleButton);
+        saveButton = (Button)findViewById(R.id.saveButton);
+        loadButton = (Button)findViewById(R.id.loadButton);
 
 
         try {
@@ -88,6 +97,22 @@ public class MainActivity extends AppCompatActivity {
         }catch(IOException ex){
             System.out.println("FILE NOT FOUND EXCEPTION");
         }
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveName();
+            }
+        });
+
+        loadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadName();
+            }
+        });
+
+
 
     }
 
@@ -142,10 +167,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void getName(View view) throws IOException{
 
+        saveButton.setEnabled(true);
+
         finalName.setText(getName(gender) + " " + getName("lastnames"));
     }
 
-    public void saveName(View view){
+    public void saveName(){
+
+        saveButton.setEnabled(false);   //disable button (so can't save more than once)
+
         String name = finalName.getText().toString() + "\n";
 
         try {
@@ -162,7 +192,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void loadName(View view){
+    public void loadName(){
+
+
         String input;
         try {
             BufferedReader bf = new BufferedReader(new FileReader(getFilesDir() + filename));
@@ -216,6 +248,30 @@ public class MainActivity extends AppCompatActivity {
             lastnames.add(name.substring(0, name.indexOf(' ')));
         }
 
+    }
+
+    public static void removeLine(String filename, int toRemove) throws IOException {
+        File tmp = File.createTempFile("tmp", "");
+
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
+
+        for (int i = 0; i < toRemove; i++) {
+            bw.write(String.format("%s%n", br.readLine()));
+        }
+
+        br.readLine();
+
+        String line;
+        while((line = br.readLine()) != null) {
+            bw.write(String.format("%s%n", line));
+
+            br.close();
+            bw.close();
+
+            File oldFile = new File (filename);
+            if (oldFile.delete()) tmp.renameTo(oldFile);
+        }
     }
 
 }
