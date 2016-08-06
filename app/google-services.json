@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "161100500911",
+    "firebase_url": "https://random-name-generator-e2def.firebaseio.com",
+    "project_id": "random-name-generator-e2def",
+    "storage_bucket": "random-name-generator-e2def.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:161100500911:android:32bc5f8e52f6765f",
+        "android_client_info": {
+          "package_name": "com.apps.corson.randomnamegenerator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "161100500911-hvva06m1ea963nhf1j34sj3jskm0mqq0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTKxnglBVDTAyvC0GinE_D7WlUQzlCd-k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

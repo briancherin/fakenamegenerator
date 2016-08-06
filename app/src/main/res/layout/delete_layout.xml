@@ -23,4 +23,14 @@
         android:layout_marginRight="5dp"
         android:background="@drawable/delete" />
 
+    <Button
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:id="@+id/copyButton"
+        android:background="@drawable/abc_ic_menu_copy_material"
+        android:layout_alignTop="@+id/deleteButton"
+        android:layout_toLeftOf="@+id/deleteButton"
+        android:layout_toStartOf="@+id/deleteButton"
+        android:layout_marginRight="10dp" />
+
 </RelativeLayout>

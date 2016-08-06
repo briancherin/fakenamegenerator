@@ -3,7 +3,6 @@ package com.apps.corson.randomnamegenerator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,16 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,9 +31,11 @@ public class MainActivity extends AppCompatActivity {
     List<String> allnames = new ArrayList<>();
     List<String> lastnames = new ArrayList<>();
 
-    static List<String> savedNames = new ArrayList<>();
+    static ArrayList<String> savedNames = new ArrayList<>();
 
-//test
+
+    public static String directory;
+
 
     TextView finalName;
     TextView loadText;
@@ -54,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
     Button loadButton;
 
     final static String filename = "saved_names";
+
+    static Context obj;
+
+    static File myFile;
+
+    Boolean bookmarkPressed = false;
 
 
     public void maleSelected(View view) {
@@ -81,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        directory = getFilesDir().toString();
+   //     System.out.println("Directory= " + directory);
+
         finalName = (TextView)findViewById(R.id.finalName);
         loadText = (TextView)findViewById(R.id.loadText);
 
@@ -90,12 +95,13 @@ public class MainActivity extends AppCompatActivity {
         saveButton = (Button)findViewById(R.id.saveButton);
         loadButton = (Button)findViewById(R.id.loadButton);
 
+        obj = this;
 
         try {
             initializeNames();
             System.out.println("in try");
-        }catch(IOException ex){
-            System.out.println("FILE NOT FOUND EXCEPTION");
+        }catch(IOException e){
+            e.printStackTrace();
         }
 
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -112,11 +118,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
-
-
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -138,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    */
 
     public String getName(String gender) throws IOException {
 
@@ -165,26 +169,39 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void getName(View view) throws IOException{
-
-        saveButton.setEnabled(true);
-
-        finalName.setText(getName(gender) + " " + getName("lastnames"));
+    public String makeUpperCamelCase(String name) {
+        String modifiedName = (name.substring(0,1) + name.substring(1, name.indexOf(" ")).toLowerCase() + name.substring(name.indexOf(" "), (name.indexOf(" ") + 2)) + name.substring((name.indexOf(" ") + 2), name.length()).toLowerCase());
+        return modifiedName;
     }
 
+    public void getName(View view) throws IOException{
+
+        saveButton.setBackgroundResource(R.drawable.ic_bookmark_border_black_24dp);
+        bookmarkPressed = false;
+
+        finalName.setText(makeUpperCamelCase(getName(gender) + " " + getName("lastnames")));
+    }
+
+
     public void saveName(){
-
-        saveButton.setEnabled(false);   //disable button (so can't save more than once)
-
-        String name = finalName.getText().toString() + "\n";
+        if (!bookmarkPressed) {       //if they pres the bookmark buttono
+            saveButton.setBackgroundResource(R.drawable.ic_bookmark_black_24dp);
+            bookmarkPressed = true;
+            String name = finalName.getText().toString() + "\n";
+            savedNames.add(name);
+        } else {                                     //if they unpress the bookmark button
+            saveButton.setBackgroundResource(R.drawable.ic_bookmark_border_black_24dp);
+            savedNames.remove(savedNames.size()-1);   //remove the name they just saved
+            try {
+                rewriteNameFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            bookmarkPressed = false;
+        }
 
         try {
-            FileOutputStream fos = new FileOutputStream((getFilesDir() + filename), true);
-            fos.write(name.getBytes());
-            fos.close();
-            Toast.makeText(getApplicationContext(), "Name saved.", Toast.LENGTH_LONG).show();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            rewriteNameFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -193,35 +210,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void loadName(){
-
-
-        String input;
-        try {
-            BufferedReader bf = new BufferedReader(new FileReader(getFilesDir() + filename));
-
-            savedNames.clear();
-            while ((input = bf.readLine()) != null){
-                savedNames.add(input);
-            }
-            System.out.println("savedNames = " + savedNames);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         Intent intent = new Intent(MainActivity.this, ActivityLoadNames.class);
         startActivity(intent);
     }
 
     public void initializeNames() throws IOException{       //Add names from textfiles to ArrayLists
-
         AssetManager am = this.context.getAssets();
-
         InputStream is = am.open("malenames.txt");
-
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
         String name = " ";
@@ -250,28 +245,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static void removeLine(String filename, int toRemove) throws IOException {
-        File tmp = File.createTempFile("tmp", "");
 
-        BufferedReader br = new BufferedReader(new FileReader(filename));
-        BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
-
-        for (int i = 0; i < toRemove; i++) {
-            bw.write(String.format("%s%n", br.readLine()));
-        }
-
-        br.readLine();
-
-        String line;
-        while((line = br.readLine()) != null) {
-            bw.write(String.format("%s%n", line));
-
-            br.close();
-            bw.close();
-
-            File oldFile = new File (filename);
-            if (oldFile.delete()) tmp.renameTo(oldFile);
+    public void rewriteNameFile() throws IOException {
+        try {
+            FileOutputStream fos = new FileOutputStream((directory + "/" + filename));
+            for (int i = 0; i < savedNames.size();  i++) {
+                fos.write((savedNames.get(i) + "\n").getBytes());
+            }
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-
 }

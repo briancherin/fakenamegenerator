@@ -30,7 +30,7 @@ public class ActivityLoadNames extends AppCompatActivity{
     ListView listView;
     Button clearButton;
 
-    List<String> list = MainActivity.savedNames;
+    ArrayList<String> list = MainActivity.savedNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,32 +39,13 @@ public class ActivityLoadNames extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         clearButton = (Button)findViewById(R.id.clearButton);
 
         listView = (ListView)findViewById(R.id.listView);
 
-        final StableArrayAdapter adapter = new StableArrayAdapter(this, android.R.layout.simple_list_item_1, list);
+        MyCustomAdapter adapter = new MyCustomAdapter(list, this);
+
         listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id){
-                final String item = (String) parent.getItemAtPosition(position);
-
-
-            }
-        });
 
 
         clearButton.setOnClickListener(new View.OnClickListener() {
@@ -80,34 +61,13 @@ public class ActivityLoadNames extends AppCompatActivity{
 
     }
 
-    private class StableArrayAdapter extends ArrayAdapter<String> {
-        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
-
-        public StableArrayAdapter(Context context, int textViewResourceId, List<String> objects){
-            super(context, textViewResourceId, objects);
-            for (int i = 0; i < objects.size(); i++){
-                mIdMap.put(objects.get(i), i);
-            }
-        }
-
-        @Override
-        public long getItemId(int position){
-            String item = getItem(position);
-            return mIdMap.get(item);
-        }
-
-        @Override
-        public boolean hasStableIds(){
-            return true;
-        }
-    }
 
     public void clearFile(){
         try{
-            FileOutputStream fos = new FileOutputStream((getFilesDir() + MainActivity.filename));
+            FileOutputStream fos = new FileOutputStream((MainActivity.directory + "/" + MainActivity.filename));
             fos.write("".getBytes());
             fos.close();
-            Toast.makeText(getApplicationContext(), "Names cleared.", Toast.LENGTH_LONG).show();
+           // Toast.makeText(getApplicationContext(), "Names cleared.", Toast.LENGTH_LONG).show();
         }catch (FileNotFoundException e){
             e.printStackTrace();
         } catch (IOException e){
